@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace api.eventful.classes
 {
-    public class Class1
-    {
-    }
+	class ServiceContext
+	{
+		public string BaseURL { get; set; }
+		public string APIKey { get; set; }
+	}
 }
