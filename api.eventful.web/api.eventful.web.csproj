@@ -161,6 +161,8 @@
     <Compile Include="Controllers\GeocodeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="ExceptionFilters\GlobalExceptionFilter.cs" />
+    <Compile Include="ExceptionFilters\GlobalExceptionLogger.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

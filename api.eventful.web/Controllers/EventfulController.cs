@@ -2,23 +2,29 @@
 using api.eventful.classes.Eventful;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Configuration;
 using System.Web.Http;
 
 namespace api.eventful.web.Controllers
 {
-    public class EventfulController : ApiController
-    {		
+	public class EventfulController : ApiController
+    {
+		private ServiceContext _serviceContext;
+		public EventfulController()
+		{
+			_serviceContext = new ServiceContext(WebConfigurationManager.AppSettings[Constants.EVENTFULBASEURL],
+				WebConfigurationManager.AppSettings[Constants.GEOCODEAPIKEY]);
+		}
+
 		public async Task<IHttpActionResult> Get(string searchOptions) {
-						
-			string url = "http://api.eventful.com/json/events/search?location=1016 Grob Court, Victoria, BC&within=10&category=books&app_key=7vqTWz24qmqmCsGS";
-			List<Events> events = new List<Events>();
+
+			_serviceContext.QueryString = HttpUtility.HtmlEncode(searchOptions); ;
+			
+			string url = _serviceContext.ServiceEndPoint;
+
 			string response = string.Empty;
 
 			using (WebClient client = new WebClient())
@@ -28,15 +34,13 @@ namespace api.eventful.web.Controllers
 
 				if (eventfulObject.events.@event.Count > 0)
 				{					
-					return Ok(eventfulObject.events.@event);
+					return Ok(eventfulObject);
 				}
 				else
 				{
 					return NotFound();
 				}
 			}
-
-			return NotFound();
 		}
 
 

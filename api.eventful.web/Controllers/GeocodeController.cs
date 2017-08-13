@@ -8,6 +8,7 @@ using System.Web.Configuration;
 using System.Web.Http;
 using api.eventful.classes;
 using api.eventful.classes.Geocode;
+using api.eventful.web.ExceptionFilters;
 
 namespace api.eventful.web.Controllers
 {
@@ -23,6 +24,8 @@ namespace api.eventful.web.Controllers
 
 		public async Task<IHttpActionResult>  Get(string address)
 		{
+			//throw new Exception("My Error ....");
+
 			address = HttpUtility.HtmlEncode(address);
 			
 			_serviceContext.QueryString = address;
@@ -47,9 +50,7 @@ namespace api.eventful.web.Controllers
 				{
 					return BadRequest(geoCodeRecord.status);
 				}
-			}
-
-			return NotFound();
+			}			
 		}
 	}
 }
