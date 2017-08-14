@@ -2,7 +2,9 @@
 using api.eventful.classes.Eventful;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
@@ -16,13 +18,13 @@ namespace api.eventful.web.Controllers
 		public EventfulController()
 		{
 			_serviceContext = new ServiceContext(WebConfigurationManager.AppSettings[Constants.EVENTFULBASEURL],
-				WebConfigurationManager.AppSettings[Constants.GEOCODEAPIKEY]);
+				WebConfigurationManager.AppSettings[Constants.EVENTFULAPIKEY]);
 		}
+		
+		public async Task<IHttpActionResult> Post(SearchOption searchOptions) {
 
-		public async Task<IHttpActionResult> Get(string searchOptions) {
+			_serviceContext.QueryString = SearchOptionToURL(searchOptions); //HttpUtility.HtmlEncode(searchOptions); ;
 
-			_serviceContext.QueryString = HttpUtility.HtmlEncode(searchOptions); ;
-			
 			string url = _serviceContext.ServiceEndPoint;
 
 			string response = string.Empty;
@@ -53,35 +55,38 @@ namespace api.eventful.web.Controllers
 
 		//return Ok(SearchOptionToURL(searchOption));
 
-		//private string SearchOptionToURL(SearchOption searchOption) {
+		private string SearchOptionToURL(SearchOption searchOption)
+		{
 
-		//	string apikey = WebConfigurationManager.AppSettings["EventfulAPIKey"]; 
-		//	string baseUrl = WebConfigurationManager.AppSettings["EventfulBaseURL"];
+			//string apikey = WebConfigurationManager.AppSettings["EventfulAPIKey"];
+			//string baseUrl = WebConfigurationManager.AppSettings["EventfulBaseURL"];
 
-		//	Dictionary<string, string> pocoJsonMap = new Dictionary<string, string>();
-		//	pocoJsonMap.Add("Address", "location");
-		//	pocoJsonMap.Add("Radius", "within");
-		//	pocoJsonMap.Add("DateStart", "date");
-		//	pocoJsonMap.Add("DateEnd", "date");			
-		//	pocoJsonMap.Add("Category", "category");
+			Dictionary<string, string> pocoJsonMap = new Dictionary<string, string>();
+			pocoJsonMap.Add("Address", "location");
+			pocoJsonMap.Add("Radius", "within");
+			pocoJsonMap.Add("DateStart", "date");
+			pocoJsonMap.Add("DateEnd", "date");
+			pocoJsonMap.Add("Category", "category");
 
-		//	var properties = typeof(SearchOption).GetProperties();
+			var properties = typeof(SearchOption).GetProperties();
 
-		//	StringBuilder queryString = new StringBuilder();
+			StringBuilder queryString = new StringBuilder();
 
-		//	foreach (var property in properties) {
-		//		var propertyName = property.Name;
-		//		var propertyValue = searchOption.GetType().GetProperty(propertyName).GetValue(searchOption);
+			foreach (var property in properties)
+			{
+				var propertyName = property.Name;
+				var propertyValue = searchOption.GetType().GetProperty(propertyName).GetValue(searchOption);
 
-		//		if (pocoJsonMap.ContainsKey(property.Name) && propertyValue!=null) {
-		//			queryString.Append(string.Format("{0}={1}&", pocoJsonMap[property.Name],
-		//				propertyValue.ToString()));
-		//		}
-		//	}
+				if (pocoJsonMap.ContainsKey(property.Name) && propertyValue != null)
+				{
+					queryString.Append(string.Format("{0}={1}&", pocoJsonMap[property.Name],
+						propertyValue.ToString()));
+				}
+			}
 
-		//	string url = string.Format("{0}{1}{2}", baseUrl, queryString.ToString(), apikey);
+			string url = queryString.ToString(); //string.Format("{0}{1}{2}", baseUrl, queryString.ToString(), apikey);
 
-		//	return url;
-		//}
+			return url;
+		}
 	}
 }
