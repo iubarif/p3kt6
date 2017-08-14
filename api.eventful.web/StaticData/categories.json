@@ -1,0 +1,18 @@
+﻿{
+  "categories": {
+    "category": [
+      {
+        "id": "music",
+        "name": "Concerts &amp; Tour Dates"
+      },            
+      {
+        "id": "performing_arts",
+        "name": "Performing Arts"
+      },      
+      {
+        "id": "sports",
+        "name": "Sports"
+      }
+    ]
+  }
+}
