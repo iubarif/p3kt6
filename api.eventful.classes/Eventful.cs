@@ -101,7 +101,7 @@ namespace api.eventful.classes.Eventful
 		public List<Event> @event { get; set; }
 	}
 
-	public class RootObject
+	public class EventfulRootObject
 	{
 		public object last_item { get; set; }
 		public string total_items { get; set; }

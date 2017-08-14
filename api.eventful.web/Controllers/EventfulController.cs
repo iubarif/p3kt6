@@ -29,7 +29,7 @@ namespace api.eventful.web.Controllers
 			using (WebClient client = new WebClient())
 			{
 				response = await client.DownloadStringTaskAsync(new Uri(url));
-				var eventfulObject = JsonConvert.DeserializeObject<RootObject>(response);
+				var eventfulObject = JsonConvert.DeserializeObject<EventfulRootObject>(response);
 
 				return Ok(eventfulObject);
 			}

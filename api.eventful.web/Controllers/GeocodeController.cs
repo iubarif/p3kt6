@@ -37,7 +37,7 @@ namespace api.eventful.web.Controllers
 			using (WebClient client = new WebClient())
 			{
 				response = await client.DownloadStringTaskAsync(new Uri(url));
-				var geoCodeRecord = JsonConvert.DeserializeObject<RootObject>(response);
+				var geoCodeRecord = JsonConvert.DeserializeObject<GeoCodeRootObject>(response);
 
 				if (geoCodeRecord.status.Equals(Constants.GEOCODESuccess, StringComparison.OrdinalIgnoreCase)) // "OK"
 				{

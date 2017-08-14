@@ -54,7 +54,7 @@ namespace api.eventful.classes.Geocode
 		public List<string> types { get; set; }
 	}
 
-	public class RootObject
+	public class GeoCodeRootObject
 	{
 		public List<Result> results { get; set; }
 		public string status { get; set; }
