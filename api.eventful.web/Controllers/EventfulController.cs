@@ -34,15 +34,6 @@ namespace api.eventful.web.Controllers
 				response = await client.DownloadStringTaskAsync(new Uri(url));
 				var eventfulObject = JsonConvert.DeserializeObject<RootObject>(response);
 
-				//if (eventfulObject.events.@event.Count > 0)
-				//{					
-				//	return Ok(eventfulObject);
-				//}
-				//else
-				//{
-				//	return NotFound();
-				//}
-
 				return Ok(eventfulObject);
 			}
 		}
@@ -66,7 +57,6 @@ namespace api.eventful.web.Controllers
 				if (pocoJsonMap.ContainsKey(propertyName) && propertyValue != null)
 				{
 					if(propertyName == Constants.Lat || propertyName == Constants.Lng) {
-						//geoCordinate.Add(propertyName, propertyValue.ToString());
 						
 						if (geoCordinate.ContainsKey(propertyName))
 							geoCordinate.Remove(propertyName);
@@ -75,8 +65,6 @@ namespace api.eventful.web.Controllers
 					}
 					else if (propertyValue.GetType() != typeof(DateTime))
 					{
-						//queryString.Append(string.Format("{0}={1}&", pocoJsonMap[propertyName],
-						//	propertyValue.ToString()));
 
 						var currentKey = pocoJsonMap[propertyName];
 
@@ -90,8 +78,6 @@ namespace api.eventful.web.Controllers
 
 						if (DateTime.TryParse(propertyValue.ToString(),out date))
 						{
-							//dateStore.Add(propertyName, date.ToString(Constants.DATEFormat));
-							
 							if (dateStore.ContainsKey(propertyName))
 								dateStore.Remove(propertyName);
 							else
@@ -108,10 +94,7 @@ namespace api.eventful.web.Controllers
 				&& pocoJsonMap.ContainsKey(Constants.Lat)
 				)
 			{
-				//var geoCords = string.Format("{0}={1},{2}&", pocoJsonMap[Constants.Lat], geoCordinate[Constants.Lng], geoCordinate[Constants.Lat]);
-				//queryString.Append(geoCords);
-
-				var geoCords = string.Format("{0}, {1}", geoCordinate[Constants.Lat], geoCordinate[Constants.Lng]);
+				var geoCords = string.Format("{0},{1}", geoCordinate[Constants.Lat], geoCordinate[Constants.Lng]);
 				var currentKey = pocoJsonMap[Constants.Lat];
 
 				if (queryStringParts.ContainsKey(currentKey))
@@ -133,9 +116,6 @@ namespace api.eventful.web.Controllers
 				&& pocoJsonMap.ContainsKey(Constants.DateStart) //	"DateStart"
 				)
 			{
-				//var dateQs = string.Format("{0}={1}-{2}&", pocoJsonMap[Constants.DateStart], dateStore[Constants.DateStart], dateStore[Constants.DateEnd]);
-				//queryString.Append(dateQs);
-
 				var dateQs = string.Format("{0}-{1}", dateStore[Constants.DateStart], dateStore[Constants.DateEnd]);
 				var currentKey = pocoJsonMap[Constants.DateStart];
 
@@ -150,7 +130,7 @@ namespace api.eventful.web.Controllers
 			}
 
 			foreach (var pair in queryStringParts) {
-				queryString.Append(string.Format("{0}={1}&", pair.Key, pair.Value));
+				queryString.Append(string.Format("{0}{1}={2}", queryString.Length==0?"":"&", pair.Key, pair.Value));
 			}
 
 			return queryString.ToString();
