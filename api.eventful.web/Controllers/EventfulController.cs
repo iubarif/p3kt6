@@ -23,7 +23,7 @@ namespace api.eventful.web.Controllers
 		
 		public async Task<IHttpActionResult> Post(SearchOption searchOptions) {
 
-			_serviceContext.QueryString = SearchOptionToURL(searchOptions); //HttpUtility.HtmlEncode(searchOptions); ;
+			_serviceContext.QueryString = SearchOptionToURL(searchOptions); 
 
 			string url = _serviceContext.ServiceEndPoint;
 
@@ -34,39 +34,25 @@ namespace api.eventful.web.Controllers
 				response = await client.DownloadStringTaskAsync(new Uri(url));
 				var eventfulObject = JsonConvert.DeserializeObject<RootObject>(response);
 
-				if (eventfulObject.events.@event.Count > 0)
-				{					
-					return Ok(eventfulObject);
-				}
-				else
-				{
-					return NotFound();
-				}
+				//if (eventfulObject.events.@event.Count > 0)
+				//{					
+				//	return Ok(eventfulObject);
+				//}
+				//else
+				//{
+				//	return NotFound();
+				//}
+
+				return Ok(eventfulObject);
 			}
 		}
 
-
-
-		//var searchOption = new SearchOption {
-		//	Address = "1016 Grob Court, Victoria, BC",
-		//	Category = "books",
-		//	Radius=10				
-		//};
-
-		//return Ok(SearchOptionToURL(searchOption));
-
 		private string SearchOptionToURL(SearchOption searchOption)
 		{
-
-			//string apikey = WebConfigurationManager.AppSettings["EventfulAPIKey"];
-			//string baseUrl = WebConfigurationManager.AppSettings["EventfulBaseURL"];
-
-			Dictionary<string, string> pocoJsonMap = new Dictionary<string, string>();
-			pocoJsonMap.Add("Address", "location");
-			pocoJsonMap.Add("Radius", "within");
-			pocoJsonMap.Add("DateStart", "date");
-			pocoJsonMap.Add("DateEnd", "date");
-			pocoJsonMap.Add("Category", "category");
+			Dictionary<string, string> pocoJsonMap = Constants.POCOJsonMap;
+			Dictionary<string, string> queryStringParts = new Dictionary<string, string>();
+			Dictionary<string, string> dateStore = new Dictionary<string, string>();
+			Dictionary<string, string> geoCordinate = new Dictionary<string, string>();
 
 			var properties = typeof(SearchOption).GetProperties();
 
@@ -77,16 +63,99 @@ namespace api.eventful.web.Controllers
 				var propertyName = property.Name;
 				var propertyValue = searchOption.GetType().GetProperty(propertyName).GetValue(searchOption);
 
-				if (pocoJsonMap.ContainsKey(property.Name) && propertyValue != null)
+				if (pocoJsonMap.ContainsKey(propertyName) && propertyValue != null)
 				{
-					queryString.Append(string.Format("{0}={1}&", pocoJsonMap[property.Name],
-						propertyValue.ToString()));
+					if(propertyName == Constants.Lat || propertyName == Constants.Lng) {
+						//geoCordinate.Add(propertyName, propertyValue.ToString());
+						
+						if (geoCordinate.ContainsKey(propertyName))
+							geoCordinate.Remove(propertyName);
+						else
+							geoCordinate.Add(propertyName, propertyValue.ToString());
+					}
+					else if (propertyValue.GetType() != typeof(DateTime))
+					{
+						//queryString.Append(string.Format("{0}={1}&", pocoJsonMap[propertyName],
+						//	propertyValue.ToString()));
+
+						var currentKey = pocoJsonMap[propertyName];
+
+						if (queryStringParts.ContainsKey(currentKey))
+							queryStringParts.Remove(currentKey);
+						else
+							queryStringParts.Add(currentKey, propertyValue.ToString());
+					}
+					else {
+						DateTime date;
+
+						if (DateTime.TryParse(propertyValue.ToString(),out date))
+						{
+							//dateStore.Add(propertyName, date.ToString(Constants.DATEFormat));
+							
+							if (dateStore.ContainsKey(propertyName))
+								dateStore.Remove(propertyName);
+							else
+								dateStore.Add(propertyName, date.ToString(Constants.DATEFormat));
+						} 
+					}
 				}
 			}
 
-			string url = queryString.ToString(); //string.Format("{0}{1}{2}", baseUrl, queryString.ToString(), apikey);
+			// http://api.eventful.com/json/events/search?location=32.746682, -117.162741&within=1&category=books
+			if (geoCordinate.Count == 2
+				&& geoCordinate.ContainsKey(Constants.Lat)
+				&& geoCordinate.ContainsKey(Constants.Lng)
+				&& pocoJsonMap.ContainsKey(Constants.Lat)
+				)
+			{
+				//var geoCords = string.Format("{0}={1},{2}&", pocoJsonMap[Constants.Lat], geoCordinate[Constants.Lng], geoCordinate[Constants.Lat]);
+				//queryString.Append(geoCords);
 
-			return url;
+				var geoCords = string.Format("{0}, {1}", geoCordinate[Constants.Lat], geoCordinate[Constants.Lng]);
+				var currentKey = pocoJsonMap[Constants.Lat];
+
+				if (queryStringParts.ContainsKey(currentKey))
+					queryStringParts.Remove(currentKey);
+
+				queryStringParts.Add(currentKey, geoCords);
+			}
+			else
+			{
+				throw new Exception("Invalid Latitude or Longitude..");
+			}
+
+
+
+
+			if (dateStore.Count == 2
+				&& dateStore.ContainsKey(Constants.DateStart)   // "DateStart" 
+				&& dateStore.ContainsKey(Constants.DateEnd)     //	"DateEnd"
+				&& pocoJsonMap.ContainsKey(Constants.DateStart) //	"DateStart"
+				)
+			{
+				//var dateQs = string.Format("{0}={1}-{2}&", pocoJsonMap[Constants.DateStart], dateStore[Constants.DateStart], dateStore[Constants.DateEnd]);
+				//queryString.Append(dateQs);
+
+				var dateQs = string.Format("{0}-{1}", dateStore[Constants.DateStart], dateStore[Constants.DateEnd]);
+				var currentKey = pocoJsonMap[Constants.DateStart];
+
+				if (queryStringParts.ContainsKey(currentKey))
+					queryStringParts.Remove(currentKey);
+
+				queryStringParts.Add(currentKey, dateQs);
+			}
+			else
+			{
+				throw new Exception("Invalid dates..");
+			}
+
+			foreach (var pair in queryStringParts) {
+				queryString.Append(string.Format("{0}={1}&", pair.Key, pair.Value));
+			}
+
+			return queryString.ToString();
 		}
+
+		private void AddToDictionary() { }
 	}
 }
