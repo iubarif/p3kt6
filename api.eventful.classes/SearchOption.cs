@@ -9,8 +9,8 @@ namespace api.eventful.classes
 		public double Lat { get; set; }
 		public double Lng { get; set; }
 		public int Radius { get; set; }
-		public DateTime DateStart { get; set; }
-		public DateTime  DateEnd { get; set; }
+		public string DateStart { get; set; }
+		public string  DateEnd { get; set; }
 		public string Category { get; set; }
 	}
 }

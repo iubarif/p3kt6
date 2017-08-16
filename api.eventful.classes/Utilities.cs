@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace api.eventful.classes
@@ -48,22 +49,24 @@ namespace api.eventful.classes
 					{
 						geoCordinate.AddToDictionary(propertyName, propertyValue.ToString());
 					}
-					else if (propertyValue.GetType() != typeof(DateTime))
-					{
-						queryStringParts.AddToDictionary(pocoJsonMap[propertyName], propertyValue.ToString());
-					}
-					else
+					else if (propertyName == Constants.DateStart || propertyName == Constants.DateEnd)
 					{
 						DateTime date;
 
-						if (DateTime.TryParse(propertyValue.ToString(), out date))
+						if (DateTime.TryParseExact(propertyValue.ToString(), "dd/MM/yyyy", 
+							CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
 						{
-							dateStore.AddToDictionary(propertyName, date.ToString(Constants.DATEFormat));
+							dateStore.AddToDictionary(propertyName, string.Format("{0}00",date.ToString(Constants.DATEFormat)));
 						}
-						else {
+						else
+						{
 							throw new Exception("Invalid DateTime.!!");
 						}
 					}
+					else if (propertyValue.GetType() != typeof(DateTime))
+					{
+						queryStringParts.AddToDictionary(pocoJsonMap[propertyName], propertyValue.ToString());
+					}					
 				}
 			}
 
@@ -83,7 +86,7 @@ namespace api.eventful.classes
 				throw new Exception("Invalid Latitude or Longitude..");
 			}
 
-			// Prepare date range YYYYMMDD-YYYYMMDD.Ex:  20170101 - 20170102
+			// Prepare date range YYYYMMDD00-YYYYMMDD00.Ex:  2017010100 - 2017010200
 			if (dateStore.Count == 2
 				&& dateStore.ContainsKey(Constants.DateStart) 
 				&& dateStore.ContainsKey(Constants.DateEnd)
