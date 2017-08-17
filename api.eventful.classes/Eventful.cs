@@ -77,7 +77,7 @@ namespace api.eventful.classes.Eventful
 		public string modified { get; set; }
 		public string venue_display { get; set; }
 		public object tz_country { get; set; }
-		public Performers performers { get; set; }
+		//public Performers performers { get; set; }
 		public string title { get; set; }
 		public string venue_address { get; set; }
 		public string geocode_type { get; set; }

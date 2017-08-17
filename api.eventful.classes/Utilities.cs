@@ -45,9 +45,9 @@ namespace api.eventful.classes
 
 				if (pocoJsonMap.ContainsKey(propertyName) && propertyValue != null)
 				{
-					if (propertyName == Constants.Lat || propertyName == Constants.Lng)
-					{
-						geoCordinate.AddToDictionary(propertyName, propertyValue.ToString());
+                    if (propertyName == Constants.Lat || propertyName == Constants.Lng)
+					{                        
+                        geoCordinate.AddToDictionary(propertyName, propertyValue.ToString());
 					}
 					else if (propertyName == Constants.DateStart || propertyName == Constants.DateEnd)
 					{
