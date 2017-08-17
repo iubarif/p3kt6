@@ -19,7 +19,10 @@ namespace api.eventful.classes
 			{ "Lng", "location"},
 			{ "DateStart", "date" },
 			{ "DateEnd", "date" },
-			{ "Category", "category" }
+			{ "Category", "category" },
+			{ "page_number", "page_number" },
+			{ "page_size", "page_size" },
+			{ "page_count", "page_count" }
 		};
 
 		public static string DateStart = "DateStart";
