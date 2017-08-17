@@ -13,6 +13,7 @@ namespace api.eventful.classes
 		public string DateStart { get; set; }
 		public string  DateEnd { get; set; }
 		public string Category { get; set; }
+		public string Units { get; set; }
 
 		// Page payload
 		public int page_number { get; set; }

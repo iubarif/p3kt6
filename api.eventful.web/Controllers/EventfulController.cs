@@ -20,6 +20,9 @@ namespace api.eventful.web.Controllers
 		
 		public async Task<IHttpActionResult> Post(SearchOption searchOptions) {
 
+			searchOptions.Units = WebConfigurationManager.AppSettings[Constants.UNITS];
+			searchOptions.page_size = int.Parse(WebConfigurationManager.AppSettings[Constants.PAGESIZE]);
+
 			_serviceContext.QueryString = Utilities.SearchOptionToURL(searchOptions); 
 
 			string url = _serviceContext.ServiceEndPoint;
@@ -31,7 +34,10 @@ namespace api.eventful.web.Controllers
 				response = await client.DownloadStringTaskAsync(new Uri(url));
 				var eventfulObject = JsonConvert.DeserializeObject<EventfulRootObject>(response);
 
-				return Ok(eventfulObject);
+				if (eventfulObject.events == null)
+					return NotFound();
+				else
+					return Ok(eventfulObject);
 			}
 		}		
 	}

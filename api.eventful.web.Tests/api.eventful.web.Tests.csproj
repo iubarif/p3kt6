@@ -95,6 +95,7 @@
   <ItemGroup>
     <Compile Include="Classes\TestClasses.cs" />
     <Compile Include="Controllers\CategoriesControllerTest.cs" />
+    <Compile Include="Controllers\GeocodeControllerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\HomeControllerTest.cs" />
     <Compile Include="Controllers\ValuesControllerTest.cs" />
@@ -106,6 +107,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\api.eventful.classes\api.eventful.classes.csproj">
+      <Project>{57B3EFFB-F931-4559-B6E4-1A234E267509}</Project>
+      <Name>api.eventful.classes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\api.eventful.web\api.eventful.web.csproj">
       <Project>{A517DFD7-F73E-4F65-9C06-0B3D59D562E1}</Project>
       <Name>api.eventful.web</Name>

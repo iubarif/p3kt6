@@ -10,7 +10,9 @@ namespace api.eventful.classes
 		public static string EVENTFULAPIKEY = "EventfulAPIKey";
 		public static string EVENTFULBASEURL = "EventfulBaseURL";
 
+		public static string UNITS = "Units";
 		public static string GEOCODESuccess = "OK";
+		public static string PAGESIZE = "PageSize";
 
 		public static  Dictionary<string, string> POCOJsonMap = new Dictionary<string, string>() {
 			{ "Address", "location" },
@@ -22,7 +24,8 @@ namespace api.eventful.classes
 			{ "Category", "category" },
 			{ "page_number", "page_number" },
 			{ "page_size", "page_size" },
-			{ "page_count", "page_count" }
+			{ "page_count", "page_count" },
+			{ "Units", "units" }			
 		};
 
 		public static string DateStart = "DateStart";
